@@ -1,0 +1,108 @@
+{
+  "name": "@metric-im/wfmu",
+  "title": "WFMU Radio",
+  "version": "0.1.0",
+  "description": "Browse and play WFMU archives and live streams on Sonos",
+  "main": "index.mjs",
+  "icon": "/agent/metric-im/wfmu/icon.svg",
+  "widget": "/agent/metric-im/wfmu/widget",
+  "permissions": [],
+  "tools": [
+    {
+      "name": "wfmu_speakers",
+      "description": "List available Sonos speakers on the local network. Returns names and IPs.",
+      "method": "GET",
+      "path": "/api/speakers",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "wfmu_shows",
+      "description": "List WFMU show codes and names. Use this to find the show code before looking up episodes.",
+      "method": "GET",
+      "path": "/api/shows",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "wfmu_episodes",
+      "description": "List recent episodes for a WFMU show by its two-letter code. Use wfmu_shows first to find the code.",
+      "method": "GET",
+      "path": "/api/shows/{code}",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "description": "Two-letter show code (e.g. MR for Wake)" }
+        },
+        "required": ["code"]
+      }
+    },
+    {
+      "name": "wfmu_play",
+      "description": "Play a WFMU episode or any audio URL on a Sonos speaker.",
+      "method": "POST",
+      "path": "/api/play",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "speaker": { "type": "string", "description": "Sonos speaker name" },
+          "url": { "type": "string", "description": "Audio URL to play" },
+          "title": { "type": "string", "description": "Track title (optional, for logging)" }
+        },
+        "required": ["speaker", "url"]
+      }
+    },
+    {
+      "name": "wfmu_live",
+      "description": "Play a live WFMU stream on a Sonos speaker. Streams: freeform, rock, drummer, sheena.",
+      "method": "POST",
+      "path": "/api/live",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "speaker": { "type": "string", "description": "Sonos speaker name" },
+          "stream": { "type": "string", "description": "Stream name: freeform (default), rock, drummer, or sheena" }
+        },
+        "required": ["speaker"]
+      }
+    },
+    {
+      "name": "wfmu_now_playing",
+      "description": "Check what is currently playing on a Sonos speaker.",
+      "method": "GET",
+      "path": "/api/now-playing",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "speaker": { "type": "string", "description": "Sonos speaker name (uses first speaker if omitted)" }
+        }
+      }
+    },
+    {
+      "name": "wfmu_playback",
+      "description": "Control Sonos playback: play, pause, stop, next, or previous.",
+      "method": "POST",
+      "path": "/api/playback",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "speaker": { "type": "string", "description": "Sonos speaker name" },
+          "action": { "type": "string", "description": "Action: play, pause, stop, next, or previous" }
+        },
+        "required": ["speaker", "action"]
+      }
+    },
+    {
+      "name": "wfmu_volume",
+      "description": "Set the volume on a Sonos speaker (0-100).",
+      "method": "POST",
+      "path": "/api/volume",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "speaker": { "type": "string", "description": "Sonos speaker name" },
+          "volume": { "type": "number", "description": "Volume level (0-100)" }
+        },
+        "required": ["speaker", "volume"]
+      }
+    }
+  ]
+}

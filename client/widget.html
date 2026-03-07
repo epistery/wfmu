@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .widget-container {
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      padding: 16px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .widget-info {
+      flex: 1;
+    }
+
+    .widget-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #495057;
+    }
+
+    .widget-info .widget-sub {
+      font-size: 12px;
+      color: #868e96;
+      margin-top: 4px;
+    }
+
+    .widget-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .widget-btn {
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: all 0.2s;
+      display: inline-block;
+      border: none;
+      background: none;
+    }
+
+    .widget-btn-live {
+      background: transparent;
+      color: #e94560;
+      border: 1px solid #e94560;
+    }
+
+    .widget-btn-live:hover {
+      background: rgba(233, 69, 96, 0.1);
+    }
+
+    .widget-btn-browse {
+      background: transparent;
+      color: #0f3460;
+      border: 1px solid #0f3460;
+    }
+
+    .widget-btn-browse:hover {
+      background: rgba(15, 52, 96, 0.1);
+    }
+
+    .now-playing {
+      font-size: 12px;
+      color: #e94560;
+      margin-top: 4px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <div class="widget-info">
+      <p>WFMU 91.1 FM — Freeform radio from Jersey City</p>
+      <div class="widget-sub">Archives &amp; live streams on Sonos</div>
+      <div class="now-playing" id="nowPlaying"></div>
+    </div>
+    <div class="widget-buttons">
+      <button class="widget-btn widget-btn-live" onclick="playLive()">Live Stream</button>
+      <a href="/agent/metric-im/wfmu/api/shows" target="_blank" class="widget-btn widget-btn-browse">Browse Shows</a>
+    </div>
+  </div>
+  <script>
+    async function playLive() {
+      try {
+        const res = await fetch('/agent/metric-im/wfmu/api/speakers');
+        const speakers = await res.json();
+        if (!speakers.length) {
+          alert('No Sonos speakers found on the network');
+          return;
+        }
+        await fetch('/agent/metric-im/wfmu/api/live', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ speaker: speakers[0].name, stream: 'freeform' })
+        });
+      } catch (e) {
+        console.error('Failed to start live stream:', e);
+      }
+    }
+
+    (async () => {
+      try {
+        const res = await fetch('/agent/metric-im/wfmu/api/now-playing');
+        const data = await res.json();
+        if (data.title) {
+          document.getElementById('nowPlaying').textContent = 'Now playing: ' + data.title;
+        }
+      } catch (_) {}
+    })();
+  </script>
+</body>
+</html>

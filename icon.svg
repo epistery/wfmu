@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="12" fill="#1a1a2e"/>
+  <text x="32" y="24" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold" font-size="11" fill="#e94560">WFMU</text>
+  <text x="32" y="36" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" fill="#0f3460">91.1 FM</text>
+  <path d="M22 44 Q26 40 30 44 Q34 48 38 44 Q42 40 46 44" stroke="#e94560" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M24 50 Q28 46 32 50 Q36 54 40 50" stroke="#0f3460" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>
