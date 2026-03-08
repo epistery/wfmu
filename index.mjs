@@ -14,8 +14,8 @@ const LIVE_STREAMS = {
   sheena:   'https://stream0.wfmu.org/sheena-128k'
 };
 
-const WFMU_RSS = 'https://wfmu.org/podcast.xml';
-const PLAYLISTS_URL = 'https://wfmu.org/playlists';
+const WFMU_RSS = 'https://wfmu.org/archivefeed/mp3.xml';
+const PLAYLISTS_URL = 'https://wfmu.org/recentarchives.php';
 
 /**
  * WFMU Radio Agent — Browse and play WFMU archives and live streams on Sonos
@@ -181,12 +181,11 @@ export default class WfmuAgent {
       const html = await res.text();
 
       const shows = [];
-      // Structure: <b>Show Name</b> ... <a href="/playlists/XX">
-      // Match the bold name followed (across lines) by the playlist link
-      const regex = /<b>([^<]+)<\/b>[\s\S]*?href="\/playlists\/([A-Za-z]{2})"/g;
+      // Structure: <a href="/playlists/XX" class="show-title-link">Show Name</a>
+      const regex = /href="\/playlists\/([A-Za-z0-9]{2})" class="show-title-link">([^<]+)/g;
       let match;
       while ((match = regex.exec(html)) !== null) {
-        shows.push({ code: match[2], name: match[1].trim() });
+        shows.push({ code: match[1], name: match[2].trim() });
       }
 
       const seen = new Set();
@@ -239,7 +238,7 @@ export default class WfmuAgent {
 
     router.get('/api/shows/:code', async (req, res) => {
       try {
-        const feedUrl = `https://wfmu.org/podcast/${req.params.code}.xml`;
+        const feedUrl = `https://wfmu.org/archivefeed/mp3/${req.params.code}.xml`;
         const episodes = await this.fetchFeed(feedUrl);
         res.json(episodes);
       } catch (err) {

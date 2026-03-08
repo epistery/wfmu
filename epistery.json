@@ -30,7 +30,7 @@
       "inputSchema": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "description": "Two-letter show code (e.g. MR for Wake)" }
+          "code": { "type": "string", "description": "Two-character show code (e.g. WA for Wake, M1 for Mona)" }
         },
         "required": ["code"]
       }
