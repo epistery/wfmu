@@ -6,12 +6,12 @@ import { XMLParser } from 'fast-xml-parser';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// WFMU live stream URLs
+// WFMU live stream URLs — use x-rincon-mp3radio:// protocol for Sonos
 const LIVE_STREAMS = {
-  freeform: 'https://stream0.wfmu.org/freeform-128k',
-  rock:     'https://stream0.wfmu.org/rock-128k',
-  drummer:  'https://stream0.wfmu.org/drummer-128k',
-  sheena:   'https://stream0.wfmu.org/sheena-128k'
+  freeform: 'x-rincon-mp3radio://stream0.wfmu.org/freeform-128k',
+  rock:     'x-rincon-mp3radio://stream0.wfmu.org/rocknsoul',
+  drummer:  'x-rincon-mp3radio://stream0.wfmu.org/drummer',
+  sheena:   'x-rincon-mp3radio://stream0.wfmu.org/sheena'
 };
 
 const WFMU_RSS = 'https://wfmu.org/archivefeed/mp3.xml';
@@ -263,7 +263,8 @@ export default class WfmuAgent {
         }
         const device = await this.getSpeaker(speaker);
         const resolvedUrl = await this.resolveM3u(url);
-        await device.play(resolvedUrl);
+        await device.setAVTransportURI({ uri: resolvedUrl, metadata: '' });
+        await device.play();
         console.log(`[wfmu] Playing "${title || url}" on ${speaker}`);
         res.json({ success: true, speaker, url: resolvedUrl, title });
       } catch (err) {
@@ -285,7 +286,8 @@ export default class WfmuAgent {
           resolved.push({ ...ep, resolvedUrl: url });
         }
 
-        await device.play(resolved[0].resolvedUrl);
+        await device.setAVTransportURI({ uri: resolved[0].resolvedUrl, metadata: '' });
+        await device.play();
         for (let i = 1; i < resolved.length; i++) {
           await device.queue(resolved[i].resolvedUrl);
         }
@@ -311,7 +313,8 @@ export default class WfmuAgent {
           });
         }
         const device = await this.getSpeaker(speaker);
-        await device.play(streamUrl);
+        await device.setAVTransportURI({ uri: streamUrl, metadata: '' });
+        await device.play();
         console.log(`[wfmu] Playing live stream "${streamName}" on ${speaker}`);
         res.json({ success: true, speaker, stream: streamName, url: streamUrl });
       } catch (err) {
