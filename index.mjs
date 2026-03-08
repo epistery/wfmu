@@ -181,10 +181,12 @@ export default class WfmuAgent {
       const html = await res.text();
 
       const shows = [];
-      const regex = /href="\/playlists\/([A-Za-z]{2})"[^>]*>([^<]+)/g;
+      // Structure: <b>Show Name</b> ... <a href="/playlists/XX">
+      // Match the bold name followed (across lines) by the playlist link
+      const regex = /<b>([^<]+)<\/b>[\s\S]*?href="\/playlists\/([A-Za-z]{2})"/g;
       let match;
       while ((match = regex.exec(html)) !== null) {
-        shows.push({ code: match[1], name: match[2].trim() });
+        shows.push({ code: match[2], name: match[1].trim() });
       }
 
       const seen = new Set();
